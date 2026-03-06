@@ -1,8 +1,13 @@
 # PawMatch — Survey Compatibility API
 **Студентка:** Омельчук Ніка Романівна 
+
 **Група:** КВ-51мп 
+
 **Лабораторна робота:** №1 — Розробка серверної частини Web-додатка  
+
 **Загальне завдання:** розробити серверну частину Web-додатку та протестувати її функціональність.
+
 **Тематика:** Система опитувань для визначення сумісності. Опитування – API для створення опитувань, додавання варіантів відповідей та отримання статистики.
+
 ## Звіт на Google Drive
-[Посилання на звіт]([https://docs.google.com/document/d1ehknBoS_pqrK-jSZcoqBU-Yn3hjH1Dz-80HhnYjm5bk/edit?usp=sharing](https://docs.google.com/document/d/1ehknBoS_pqrK-jSZcoqBU-Yn3hjH1Dz-80HhnYjm5bk/edit?usp=sharing))
+[Посилання на звіт](https://docs.google.com/document/d/1ehknBoS_pqrK-jSZcoqBU-Yn3hjH1Dz-80HhnYjm5bk/edit?usp=sharing)
