@@ -39,7 +39,7 @@ export default function AuthPage() {
         }
     };
 
-    const [regData, setRegData] = useState({ username: '', email: '', password: '', password2: '' });
+    const [regData, setRegData] = useState({ username: '', email: '', password: '', password2: '', gender: '', birth_date: '' });
     const [regLoading, setRegLoading] = useState(false);
 
     const handleRegister = async (e) => {
@@ -57,6 +57,8 @@ export default function AuthPage() {
                     email: regData.email.trim(),
                     password: regData.password,
                     password2: regData.password2,
+                    gender: regData.gender || null,
+                    birth_date: regData.birth_date || null,
                 }),
             });
             login(data.token, data.user);
@@ -124,6 +126,22 @@ export default function AuthPage() {
                                 <label className="form-label">Email</label>
                                 <input className="form-control" type="email" placeholder="your@email.com" required
                                     value={regData.email} onChange={e => setRegData(d => ({ ...d, email: e.target.value }))} />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Стать</label>
+                                <select className="form-control" value={regData.gender}
+                                    onChange={e => setRegData(d => ({ ...d, gender: e.target.value }))}>
+                                    <option value="">— Оберіть стать —</option>
+                                    <option value="M">Чоловік</option>
+                                    <option value="F">Жінка</option>
+                                    <option value="O">Інше</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Дата народження</label>
+                                <input className="form-control" type="date"
+                                    value={regData.birth_date}
+                                    onChange={e => setRegData(d => ({ ...d, birth_date: e.target.value }))} />
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Пароль</label>

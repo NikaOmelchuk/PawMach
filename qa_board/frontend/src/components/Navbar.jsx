@@ -39,12 +39,12 @@ export default function Navbar({ title, backLink, activeLink }) {
 
     return (
         <nav className="navbar">
-            {}
+            { }
             <Link to="/dashboard" className="navbar-brand">
                 <span className="brand-icon">🐱</span> PawMatch
             </Link>
 
-            {}
+            { }
             <ul className="navbar-nav navbar-nav-desktop">
                 {backLink ? (
                     <li><Link to={backLink} className="nav-link">← Назад</Link></li>
@@ -52,6 +52,7 @@ export default function Navbar({ title, backLink, activeLink }) {
                     <>
                         <li><Link to="/dashboard" className={`nav-link${activeLink === 'dashboard' ? ' active' : ''}`}>Опитування</Link></li>
                         {isAdmin && <li><Link to="/services" className={`nav-link${activeLink === 'services' ? ' active' : ''}`}>🛠️ Сервіси</Link></li>}
+                        <li><Link to="/about" className={`nav-link${activeLink === 'about' ? ' active' : ''}`}>Про додаток</Link></li>
                         <li><Link to="/profile" className={`nav-link${activeLink === 'profile' ? ' active' : ''}`}>Мій профіль</Link></li>
                     </>
                 )}
@@ -67,7 +68,7 @@ export default function Navbar({ title, backLink, activeLink }) {
                 </li>
             </ul>
 
-            {}
+            { }
             <div className="navbar-user navbar-user-desktop">
                 {title && (
                     <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-mid)', marginRight: '1rem' }}>
@@ -83,7 +84,7 @@ export default function Navbar({ title, backLink, activeLink }) {
                 </button>
             </div>
 
-            {}
+            { }
             <div className="navbar-mobile-controls">
                 <button className="btn btn-outline btn-sm" style={{ padding: '0.3rem 0.6rem', border: 'none' }}
                     title="Поділитись" onClick={sharePage}>🔗</button>
@@ -103,7 +104,7 @@ export default function Navbar({ title, backLink, activeLink }) {
                 </button>
             </div>
 
-            {}
+            { }
             {menuOpen && (
                 <div className="navbar-mobile-menu">
                     {backLink ? (
@@ -112,6 +113,7 @@ export default function Navbar({ title, backLink, activeLink }) {
                         <>
                             <Link to="/dashboard" className={`mobile-nav-link${activeLink === 'dashboard' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>🗳️ Опитування</Link>
                             {isAdmin && <Link to="/services" className={`mobile-nav-link${activeLink === 'services' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>🛠️ Сервіси</Link>}
+                            <Link to="/about" className={`mobile-nav-link${activeLink === 'about' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>🐱 Про додаток</Link>
                             <Link to="/profile" className={`mobile-nav-link${activeLink === 'profile' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>👤 Мій профіль</Link>
                         </>
                     )}

@@ -8,6 +8,7 @@ import SessionPage from './pages/SessionPage';
 import ResultsPage from './pages/ResultsPage';
 import ProfilePage from './pages/ProfilePage';
 import LabServicesPage from './pages/LabServicesPage';
+import AboutPage from './pages/AboutPage';
 
 export default function App() {
   return (
@@ -34,8 +35,11 @@ export default function App() {
           <Route path="/services" element={
             <ProtectedRoute><LabServicesPage /></ProtectedRoute>
           } />
+          <Route path="/about" element={
+            <ProtectedRoute><AboutPage /></ProtectedRoute>
+          } />
 
-          {}
+          { }
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
