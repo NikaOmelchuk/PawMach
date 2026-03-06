@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — PawMatch</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="/dashboard/" class="navbar-brand">
+            <span class="brand-icon">🐱</span> PawMatch
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="/dashboard/" class="nav-link active">Опитування</a></li>
+            <li><a href="/api/swagger/" class="nav-link" target="_blank">API Docs</a></li>
+            <li><button class="btn btn-outline btn-sm btn-share" style="padding:0.3rem 0.6rem; border:none;"
+                    title="Поділитись сторінкою">🔗</button></li>
+            <li><button class="btn btn-outline btn-sm btn-theme-toggle" style="padding:0.3rem 0.6rem; border:none;"
+                    title="Змінити тему">🌙</button></li>
+        </ul>
+        <div class="navbar-user">
+            <a href="/profile/"
+                style="text-decoration: none; display: flex; align-items: center; gap: 10px; color: inherit;">
+                <span style="font-size:0.875rem;color:var(--text-mid);font-weight:600;" id="nav-username"></span>
+                <div class="user-avatar" id="user-avatar-letter" title="Мій профіль">U</div>
+            </a>
+            <button class="btn btn-outline btn-sm" id="btn-logout" style="margin-left: 15px;">Вийти</button>
+        </div>
+    </nav>
+
+    <div class="page-wrapper">
+
+        <div class="page-header">
+            <h1 class="page-title">🐾 Опитування на сумісність</h1>
+            <p class="page-subtitle">Обери опитування, запроси друзів і дізнайся наскільки ви схожі</p>
+        </div>
+
+        <div class="join-box mb-3">
+            <h3>Маєш код сесії? 🔑</h3>
+            <p>Введи код щоб приєднатись до чужої сесії</p>
+            <form class="join-input-row" id="join-form">
+                <input class="form-control" type="text" id="join-code" placeholder="ABC123" maxlength="8"
+                    style="text-transform:uppercase;letter-spacing:0.15em;font-weight:700;text-align:center;">
+                <button type="submit" class="btn btn-primary">→ Приєднатись</button>
+            </form>
+        </div>
+
+        <div class="filter-tabs" id="category-tabs">
+            <button class="filter-tab active" data-id="">Всі категорії</button>
+        </div>
+
+        <div class="grid-3" id="surveys-grid">
+            <div class="loader" style="grid-column:1/-1">
+                <div class="spinner"></div>
+                <span>Завантаження...</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="{% static 'js/api.js' %}?v=2"></script>
+    <script src="{% static 'js/dashboard.js' %}?v=2"></script>
+</body>
+
+</html>

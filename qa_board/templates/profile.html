@@ -1,0 +1,243 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мій Профіль — PawMatch</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 32px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 20px;
+            object-fit: cover;
+            border: 4px solid var(--bg);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-upload-group {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="/dashboard/" class="navbar-brand">
+            <span class="brand-icon">🐱</span> PawMatch
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="/dashboard/" class="nav-link">Опитування</a></li>
+            <li><a href="/profile/" class="nav-link active">Мій профіль</a></li>
+        </ul>
+        <div class="navbar-user">
+            <button class="btn btn-outline btn-sm btn-theme-toggle"
+                style="padding:0.3rem 0.6rem; border:none; margin-right: 15px;" title="Змінити тему">🌙</button>
+            <span style="font-size:0.875rem;color:var(--text-mid);font-weight:600;" id="nav-username"></span>
+            <button class="btn btn-outline btn-sm ml-2" id="btn-logout" style="margin-left:10px;">Вийти</button>
+        </div>
+    </nav>
+
+    <div class="page-wrapper">
+        <div class="profile-container">
+            <h2 style="text-align: center; margin-bottom: 25px;">Налаштування профілю</h2>
+
+            <form id="profile-form">
+                <div class="avatar-upload-group">
+                    <img id="avatar-img" class="avatar-preview" style="display:none;" />
+                    <div id="avatar-placeholder" class="avatar-preview">U</div>
+
+                    <label class="btn btn-outline btn-sm" style="cursor: pointer; display: inline-block;">
+                        📸 Змінити фото
+                        <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Email (недоступно для зміни)</label>
+                    <input type="email" id="pf-email" class="form-control disabled" disabled
+                        style="background: var(--bg); color: var(--text-mid); cursor: not-allowed;">
+                </div>
+
+                <div class="form-group">
+                    <label>Нікнейм (Username)</label>
+                    <input type="text" id="pf-username" class="form-control" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ім'я</label>
+                        <input type="text" id="pf-firstname" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Прізвище</label>
+                        <input type="text" id="pf-lastname" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Стать</label>
+                        <select id="pf-gender" class="form-control">
+                            <option value="">Не вказано</option>
+                            <option value="M">Чоловік</option>
+                            <option value="F">Жінка</option>
+                            <option value="O">Інше</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Дата народження</label>
+                        <input type="date" id="pf-birthdate" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Про себе</label>
+                    <textarea id="pf-bio" class="form-control" rows="3"
+                        placeholder="Розкажіть трохи про себе..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;" id="btn-save">
+                    Зберегти зміни
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'js/api.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth()) return;
+
+            document.getElementById('btn-logout').addEventListener('click', async () => {
+                await apiFetch('/auth/logout/', { method: 'POST' });
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/';
+            });
+
+            // Завантаження профілю
+            try {
+                const profile = await apiFetch('/auth/profile/');
+                document.getElementById('nav-username').textContent = profile.username;
+
+                document.getElementById('pf-email').value = profile.email || '';
+                document.getElementById('pf-username').value = profile.username || '';
+                document.getElementById('pf-firstname').value = profile.first_name || '';
+                document.getElementById('pf-lastname').value = profile.last_name || '';
+                document.getElementById('pf-gender').value = profile.gender || '';
+                document.getElementById('pf-birthdate').value = profile.birth_date || '';
+                document.getElementById('pf-bio').value = profile.bio || '';
+
+                if (profile.avatar) {
+                    document.getElementById('avatar-img').src = profile.avatar;
+                    document.getElementById('avatar-img').style.display = 'block';
+                    document.getElementById('avatar-placeholder').style.display = 'none';
+                } else {
+                    document.getElementById('avatar-placeholder').textContent = profile.username.charAt(0).toUpperCase();
+                }
+
+            } catch (err) {
+                showToast('Помилка завантаження профілю', 'error');
+            }
+
+            // Зміна аватарки (прев'ю)
+            let selectedAvatarFile = null;
+            document.getElementById('avatar-input').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    selectedAvatarFile = file;
+                    const url = URL.createObjectURL(file);
+                    document.getElementById('avatar-img').src = url;
+                    document.getElementById('avatar-img').style.display = 'block';
+                    document.getElementById('avatar-placeholder').style.display = 'none';
+                }
+            });
+
+            // Збереження
+            document.getElementById('profile-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('btn-save');
+                btn.disabled = true;
+                btn.textContent = 'Збереження...';
+
+                try {
+                    const formData = new FormData();
+                    formData.append('username', document.getElementById('pf-username').value);
+                    formData.append('first_name', document.getElementById('pf-firstname').value);
+                    formData.append('last_name', document.getElementById('pf-lastname').value);
+                    formData.append('bio', document.getElementById('pf-bio').value);
+
+                    const gender = document.getElementById('pf-gender').value;
+                    if (gender) formData.append('gender', gender);
+
+                    const birthDate = document.getElementById('pf-birthdate').value;
+                    if (birthDate) formData.append('birth_date', birthDate);
+
+                    if (selectedAvatarFile) {
+                        formData.append('avatar', selectedAvatarFile);
+                    }
+
+                    // Для відправки FormData нам потрібен кастомний fetch (без Content-Type)
+                    const token = getToken();
+                    const csrfToken = getCookie('csrftoken');
+
+                    const response = await fetch('/api/v1/auth/profile/', {
+                        method: 'PATCH',
+                        headers: {
+                            'ngrok-skip-browser-warning': 'true',
+                            'Authorization': `Token ${token}`,
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        const data = await response.json();
+                        throw new Error(Object.values(data)[0] || 'Помилка збереження');
+                    }
+
+                    const updatedUser = await response.json();
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    document.getElementById('nav-username').textContent = updatedUser.username;
+
+                    showToast('Профіль успішно оновлено!', 'success');
+                } catch (err) {
+                    showToast(err.message, 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Зберегти зміни';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PawMatch — Знайди свою пару</title>
+  <meta name="description" content="Система опитувань на сумісність. Визнач свій стиль, знайди схожих людей.">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+  <div style="position:fixed; top:1rem; right:1rem; display:flex; gap:0.5rem; z-index:100;">
+    <button class="btn btn-outline btn-sm btn-theme-toggle" style="background:var(--card-bg);backdrop-filter:blur(8px);"
+      title="Змінити тему">🌙</button>
+  </div>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <span class="auth-logo-icon">🐱</span>
+        <div class="auth-logo-title">PawMatch</div>
+        <div class="auth-logo-sub">Опитування на сумісність</div>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login">Увійти</button>
+        <button class="auth-tab" id="tab-register">Реєстрація</button>
+      </div>
+
+      <form id="form-login" autocomplete="off">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email</label>
+          <input class="form-control" type="email" name="email" id="login-email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-pass">Пароль</label>
+          <input class="form-control" type="password" name="password" id="login-pass" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full btn-lg mt-2">
+          🐾 Увійти
+        </button>
+      </form>
+
+      <form id="form-register" class="hidden" autocomplete="off">
+        <div class="form-group">
+          <label class="form-label">Ім'я користувача</label>
+          <input class="form-control" type="text" name="username" placeholder="cat_lover_42" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-control" type="email" name="email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пароль</label>
+          <input class="form-control" type="password" name="password" placeholder="мін. 8 символів" required>
+          <div class="form-hint">Мінімум 8 символів</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Повторіть пароль</label>
+          <input class="form-control" type="password" name="password2" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full btn-lg mt-2">
+          🐱 Зареєструватись
+        </button>
+      </form>
+
+      <div style="text-align:center;margin-top:1.25rem;font-size:0.8rem;color:var(--text-muted);">
+        Проходячи реєстрацію, ви погоджуєтесь із правилами платформи 🐾
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'js/api.js' %}"></script>
+  <script src="{% static 'js/auth.js' %}"></script>
+</body>
+
+</html>

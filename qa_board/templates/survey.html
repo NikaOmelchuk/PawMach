@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Опитування — PawMatch</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="/dashboard/" class="navbar-brand"><span class="brand-icon">🐱</span> PawMatch</a>
+        <ul class="navbar-nav">
+            <li><a href="/dashboard/" class="nav-link">← Назад</a></li>
+            <li><button class="btn btn-outline btn-sm btn-share" style="padding:0.3rem 0.6rem; border:none;"
+                    title="Поділитись опитуванням">🔗</button></li>
+            <li><button class="btn btn-outline btn-sm btn-theme-toggle" style="padding:0.3rem 0.6rem; border:none;"
+                    title="Змінити тему">🌙</button></li>
+        </ul>
+        <div class="navbar-user">
+            <a href="/profile/"
+                style="text-decoration: none; display: flex; align-items: center; gap: 10px; color: inherit;">
+                <span style="font-size:0.875rem;color:var(--text-mid);font-weight:600;" id="nav-username"></span>
+                <div class="user-avatar" id="user-avatar-letter" title="Мій профіль">U</div>
+            </a>
+            <button class="btn btn-outline btn-sm" id="btn-logout" style="margin-left: 15px;">Вийти</button>
+        </div>
+    </nav>
+
+    <div class="page-wrapper">
+        <div id="survey-detail">
+            <div style="display:grid;grid-template-columns:1fr 340px;gap:2rem;align-items:start;" id="survey-layout">
+
+                <div>
+                    <div id="survey-category" class="mb-2"></div>
+                    <h1 class="page-title" id="survey-title">Завантаження...</h1>
+                    <p class="page-subtitle" id="survey-description"></p>
+                    <div class="survey-meta mt-2 mb-3" id="survey-meta"
+                        style="display:flex;gap:1.5rem;color:var(--text-muted);font-size:0.875rem;"></div>
+
+                    <div class="card">
+                        <div class="card-title mb-2">📋 Питання опитування</div>
+                        <div id="questions-preview"></div>
+                    </div>
+                </div>
+
+                <div style="position:sticky;top:80px;display:flex;flex-direction:column;gap:1rem;">
+
+                    <div class="card" style="text-align:center;">
+                        <div style="font-size:2.5rem;margin-bottom:0.5rem;">🚀</div>
+                        <div class="card-title">Створити сесію</div>
+                        <div class="card-body mb-2" style="font-size:0.85rem;">Стань організатором — запроси учасників
+                            за кодом</div>
+                        <button class="btn btn-primary btn-full" id="btn-create-session">🚀 Створити сесію</button>
+                    </div>
+
+                    <div class="join-box">
+                        <h3>Вже є код?</h3>
+                        <p>Приєднайтесь до існуючої сесії</p>
+                        <form id="join-form">
+                            <div class="join-input-row">
+                                <input class="form-control" type="text" id="join-code" placeholder="ABC123"
+                                    maxlength="8"
+                                    style="text-transform:uppercase;letter-spacing:0.15em;font-weight:700;text-align:center;">
+                                <button type="submit" class="btn btn-secondary">→</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>window.SURVEY_ID = "{{ survey_id }}";</script>
+    <script src="{% static 'js/api.js' %}?v=2"></script>
+    <script src="{% static 'js/survey.js' %}?v=2"></script>
+</body>
+
+</html>

@@ -1,0 +1,823 @@
+{
+    "info": {
+        "name": "PawMatch API 🐱",
+        "description": "Колекція запитів для тестування API платформи PawMatch — опитування на сумісність.\n\n**Як використовувати:**\n1. Імпортуйте колекцію до Postman\n2. Імпортуйте Environment (PawMatch Environment)\n3. Запустіть запит **Login** — token збережеться автоматично\n4. Всі наступні запити будуть авторизовані автоматично",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "session_id",
+            "value": "1",
+            "type": "string"
+        },
+        {
+            "key": "survey_id",
+            "value": "1",
+            "type": "string"
+        },
+        {
+            "key": "session_code",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "🔵 Auth",
+            "item": [
+                {
+                    "name": "App Info",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/app/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "app",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Has name field', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.property('name');",
+                                    "    pm.expect(json.name).to.include('Survey');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"testuser_{{$timestamp}}\",\n  \"email\": \"test{{$timestamp}}@example.com\",\n  \"password\": \"securepass123\",\n  \"password2\": \"securepass123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/register/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "register",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+                                    "pm.test('Has token', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.property('token');",
+                                    "    pm.expect(json.token).to.be.a('string').and.not.empty;",
+                                    "    pm.collectionVariables.set('token', json.token);",
+                                    "});",
+                                    "pm.test('Save credentials for Login', () => {",
+                                    "    const reqBody = JSON.parse(pm.request.body.raw);",
+                                    "    pm.collectionVariables.set('login_email', reqBody.email);",
+                                    "    pm.collectionVariables.set('login_pass', reqBody.password);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"{{login_email}}\",\n  \"password\": \"{{login_pass}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                                    "pm.test('Has token', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.property('token');",
+                                    "    pm.collectionVariables.set('token', json.token);",
+                                    "    console.log('✅ Token saved:', json.token);",
+                                    "});",
+                                    "pm.test('Has user profile', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json.user).to.have.property('username');",
+                                    "    pm.expect(json.user).to.have.property('email');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Login — Wrong Password (Negative)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"WRONGPASSWORD\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 400 for wrong creds', () => pm.response.to.have.status(400));",
+                                    "pm.test('Has error message', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.property('non_field_errors');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Token {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/auth/profile/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "profile",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Profile fields present', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.all.keys('id','username','email','first_name','last_name','gender','birth_date','bio','avatar','date_joined');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Update Profile",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Token {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"first_name\": \"Мяу\",\n  \"last_name\": \"Кись\",\n  \"bio\": \"Люблю котиків і опитування 🐱\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/profile/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "profile",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Bio updated', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json.bio).to.include('котиків');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🟣 Surveys",
+            "item": [
+                {
+                    "name": "List Categories",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/categories/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "categories",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Returns array', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    const list = json.results ?? json;",
+                                    "    pm.expect(list).to.be.an('array');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "List Surveys",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/surveys/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "surveys",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Has paginated results', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.property('results');",
+                                    "    pm.expect(json.results).to.be.an('array');",
+                                    "    if (json.results.length > 0) {",
+                                    "        pm.collectionVariables.set('survey_id', json.results[0].id);",
+                                    "        console.log('survey_id set to:', json.results[0].id);",
+                                    "    }",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "List Surveys — Filter by Category",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/surveys/?category=1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "surveys",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "category",
+                                    "value": "1"
+                                }
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Filtered results', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.property('results');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Survey Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/surveys/{{survey_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "surveys",
+                                "{{survey_id}}",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Has questions', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.property('questions');",
+                                    "    pm.expect(json.questions).to.be.an('array');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🟢 Sessions",
+            "item": [
+                {
+                    "name": "Create Session",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Token {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"survey_id\": {{survey_id}}\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/sessions/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "sessions",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                                    "pm.test('Has session_code', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.property('session_code');",
+                                    "    pm.expect(json.session_code).to.be.a('string').and.have.lengthOf(6);",
+                                    "    pm.collectionVariables.set('session_id', json.id);",
+                                    "    pm.collectionVariables.set('session_code', json.session_code);",
+                                    "    console.log('✅ Session created, code:', json.session_code);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "List My Sessions",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Token {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/sessions/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "sessions",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Returns my sessions', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.property('results');",
+                                    "    pm.expect(json.results).to.be.an('array');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Join Session by Code",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Token {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"session_code\": \"{{session_code}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/sessions/join/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "sessions",
+                                "join",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200 or 400 (already joined)', () => {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 400]);",
+                                    "});",
+                                    "if (pm.response.code === 200) {",
+                                    "    pm.test('Session data returned', () => {",
+                                    "        const json = pm.response.json();",
+                                    "        pm.expect(json).to.have.property('session_code');",
+                                    "    });",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Submit Answers",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Token {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"answers\": [\n    { \"question_id\": 1, \"selected_option_id\": 1 },\n    { \"question_id\": 2, \"selected_option_id\": 4 },\n    { \"question_id\": 3, \"scale_value\": 7 }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/sessions/{{session_id}}/submit/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "sessions",
+                                "{{session_id}}",
+                                "submit",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200 or 400', () => {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 400]);",
+                                    "});",
+                                    "if (pm.response.code === 200) {",
+                                    "    pm.test('Saved count returned', () => {",
+                                    "        const json = pm.response.json();",
+                                    "        pm.expect(json).to.have.property('saved');",
+                                    "        pm.expect(json).to.have.property('detail');",
+                                    "    });",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Complete Session",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Token {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/sessions/{{session_id}}/complete/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "sessions",
+                                "{{session_id}}",
+                                "complete",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200 or 400 (already completed)', () => {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 400, 403]);",
+                                    "});",
+                                    "if (pm.response.code === 200) {",
+                                    "    pm.test('Returns compatibility results', () => {",
+                                    "        const json = pm.response.json();",
+                                    "        pm.expect(json).to.be.an('array');",
+                                    "    });",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Session Results",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Token {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/sessions/{{session_id}}/results/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "sessions",
+                                "{{session_id}}",
+                                "results",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Returns array of results', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.be.an('array');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Join with Invalid Code (Negative)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Token {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"session_code\": \"BADCOD\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/sessions/join/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "sessions",
+                                "join",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 404 for invalid code', () => pm.response.to.have.status(404));",
+                                    "pm.test('Error message present', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.property('detail');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Access Session Without Auth (Negative)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/sessions/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "sessions",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 401 without token', () => pm.response.to.have.status(401));",
+                                    "pm.test('Auth error detail', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json).to.have.property('detail');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🛑 Teardown",
+            "item": [
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Token {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/auth/logout/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "logout",
+                                ""
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Logout message', () => {",
+                                    "    const json = pm.response.json();",
+                                    "    pm.expect(json.detail).to.include('вийшли');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

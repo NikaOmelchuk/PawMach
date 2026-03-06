@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результати — PawMatch</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="/dashboard/" class="navbar-brand"><span class="brand-icon">🐱</span> PawMatch</a>
+        <ul class="navbar-nav">
+            <li><a href="/dashboard/" class="nav-link">← На головну</a></li>
+            <li><button class="btn btn-outline btn-sm btn-share" style="padding:0.3rem 0.6rem; border:none;"
+                    title="Поділитись результатами">🔗</button></li>
+            <li><button class="btn btn-outline btn-sm btn-theme-toggle" style="padding:0.3rem 0.6rem; border:none;"
+                    title="Змінити тему">🌙</button></li>
+        </ul>
+        <div class="navbar-user">
+            <a href="/profile/"
+                style="text-decoration: none; display: flex; align-items: center; gap: 10px; color: inherit;">
+                <span style="font-size:0.875rem;color:var(--text-mid);font-weight:600;" id="nav-username"></span>
+                <div class="user-avatar" id="user-avatar-letter" title="Мій профіль">U</div>
+            </a>
+            <button class="btn btn-outline btn-sm" id="btn-logout" style="margin-left: 15px;">Вийти</button>
+        </div>
+    </nav>
+
+    <div class="page-wrapper">
+
+        <div class="page-header text-center">
+            <div style="font-size:3rem;margin-bottom:0.5rem;">💜</div>
+            <h1 class="page-title" id="session-survey-title">Результати сумісності</h1>
+            <p class="page-subtitle">Ось наскільки ви схожі між собою</p>
+        </div>
+
+        <div class="grid-2" id="results-container">
+            <div class="loader" style="grid-column:1/-1">
+                <div class="spinner"></div>
+                <span>Рахуємо сумісність...</span>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <a href="/dashboard/" class="btn btn-secondary btn-lg">🐾 Нове опитування</a>
+        </div>
+
+    </div>
+
+    <script>window.SESSION_ID = "{{ session_id }}";</script>
+    <script src="{% static 'js/api.js' %}?v=2"></script>
+    <script src="{% static 'js/results.js' %}?v=2"></script>
+</body>
+
+</html>

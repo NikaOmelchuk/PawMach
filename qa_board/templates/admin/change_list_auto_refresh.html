@@ -1,0 +1,50 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+{{ block.super }}
+<li>
+    <button type="button" onclick="location.reload();"
+        style="background: #79aec8; padding: 10px 15px; border-radius: 4px; color: white; border: none; cursor: pointer; font-weight: bold; margin-left: 10px;">
+        🔄 Оновити дані
+    </button>
+</li>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // Додаємо чекбокс для автооновлення біля кнопки
+        const toolsUl = document.querySelector('.object-tools');
+        if (toolsUl) {
+            const li = document.createElement('li');
+            li.style.display = 'flex';
+            li.style.alignItems = 'center';
+            li.style.marginLeft = '10px';
+            li.innerHTML = `
+                <label style="color: #666; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                    <input type="checkbox" id="autoRefreshToggle" ${localStorage.getItem('adminAutoRefresh') === 'true' ? 'checked' : ''}>
+                    Автооновлення (5с)
+                </label>
+            `;
+            toolsUl.appendChild(li);
+
+            let refreshInterval;
+            const toggle = document.getElementById('autoRefreshToggle');
+
+            function handleRefresh() {
+                if (toggle.checked) {
+                    refreshInterval = setInterval(() => location.reload(), 5000);
+                    localStorage.setItem('adminAutoRefresh', 'true');
+                } else {
+                    clearInterval(refreshInterval);
+                    localStorage.setItem('adminAutoRefresh', 'false');
+                }
+            }
+
+            toggle.addEventListener('change', handleRefresh);
+            handleRefresh(); // Запускаємо перевірку при старті
+        }
+    });
+</script>
+{% endblock %}
