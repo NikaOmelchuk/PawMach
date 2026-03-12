@@ -1,18 +1,19 @@
 import Navbar from '../components/Navbar';
 
+import HeartPawsLogo from '../components/HeartPawsLogo';
+
 export default function AboutPage() {
     return (
         <div>
             <Navbar activeLink="about" />
             <div className="page-container" style={{ maxWidth: 700, margin: '0 auto', padding: '2rem 1rem' }}>
-                <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+                <div style={{ textAlign: 'center', marginBottom: '1.2rem' }}>
                     <div style={{
-                        fontSize: '5rem',
-                        lineHeight: 1,
-                        marginBottom: '1rem',
-                        filter: 'drop-shadow(0 4px 16px rgba(147,112,219,0.35))'
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginBottom: '0'
                     }}>
-                        🐱
+                        <HeartPawsLogo />
                     </div>
                     <h1 style={{
                         fontSize: '2.2rem',
@@ -20,11 +21,12 @@ export default function AboutPage() {
                         background: 'linear-gradient(135deg, var(--accent), var(--accent-2, #b48aff))',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
-                        marginBottom: '0.4rem'
+                        marginBottom: '0',
+                        marginTop: '-1rem'
                     }}>
                         PawMatch
                     </h1>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', fontStyle: 'italic' }}>
+                    <p style={{ color: 'var(--lavender-mid)', fontSize: '1.15rem', fontStyle: 'italic', margin: 0, fontWeight: 500 }}>
                         Опитування на сумісність
                     </p>
                 </div>

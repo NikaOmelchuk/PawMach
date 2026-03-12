@@ -60,15 +60,22 @@ class SurveySessionSerializer(serializers.ModelSerializer):
     created_by = UserShortSerializer(read_only=True)
     participant_count = serializers.IntegerField(read_only=True)
     is_full = serializers.BooleanField(read_only=True)
+    has_submitted = serializers.SerializerMethodField()
 
     class Meta:
         model = SurveySession
         fields = (
             'id', 'survey', 'survey_id', 'session_code',
             'participants', 'participant_count', 'is_full',
-            'created_by', 'status', 'created_at'
+            'created_by', 'status', 'has_submitted', 'created_at'
         )
         read_only_fields = ('session_code', 'status', 'created_by', 'created_at')
+
+    def get_has_submitted(self, obj) -> bool:
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return False
+        return UserAnswer.objects.filter(session=obj, user=request.user).exists()
 
 class UserAnswerSubmitSerializer(serializers.Serializer):
     

@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { apiFetch, showToast } from '../api';
+import { apiFetch, showToast, getMediaUrl } from '../api';
 import { useAuth } from '../context/AuthContext';
+
+import HeartPawsLogo from '../components/HeartPawsLogo';
 
 export default function ResultsPage() {
     const { id } = useParams();
@@ -91,19 +93,39 @@ export default function ResultsPage() {
                         const scoreRounded = Math.round(r.score);
                         return (
                             <div key={r.id} className="card result-card">
+                                <HeartPawsLogo
+                                    className="result-card-logo"
+                                    width={120} height={120}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '-10px',
+                                        right: '-10px',
+                                        opacity: 0.08,
+                                        transform: 'rotate(15deg)',
+                                        pointerEvents: 'none'
+                                    }}
+                                />
                                 <div className="compat-users">
-                                    <div className="user-avatar" style={{ width: 40, height: 40 }}>{r.user1.username[0].toUpperCase()}</div>
+                                    {r.user1.avatar ? (
+                                        <img src={getMediaUrl(r.user1.avatar)} alt="avatar" className="user-avatar" style={{ width: 40, height: 40, objectFit: 'cover' }} />
+                                    ) : (
+                                        <div className="user-avatar" style={{ width: 40, height: 40 }}>{r.user1.username[0].toUpperCase()}</div>
+                                    )}
                                     <span>{r.user1.username}</span>
                                     <span className="compat-heart">♥</span>
                                     <span>{r.user2.username}</span>
-                                    <div className="user-avatar" style={{ width: 40, height: 40 }}>{r.user2.username[0].toUpperCase()}</div>
+                                    {r.user2.avatar ? (
+                                        <img src={getMediaUrl(r.user2.avatar)} alt="avatar" className="user-avatar" style={{ width: 40, height: 40, objectFit: 'cover' }} />
+                                    ) : (
+                                        <div className="user-avatar" style={{ width: 40, height: 40 }}>{r.user2.username[0].toUpperCase()}</div>
+                                    )}
                                 </div>
 
-                                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', position: 'relative', zIndex: 2 }}>
                                     <div className="compat-score" id={`score-${r.id}`}>0%</div>
                                     <span style={{ fontSize: '1.5rem' }}>{getEmoji(scoreRounded)}</span>
                                 </div>
-                                <div style={{ color: 'var(--text-light)', fontWeight: 600, marginBottom: '1rem' }}>{getLabel(scoreRounded)}</div>
+                                <div style={{ color: 'var(--text-light)', fontWeight: 600, marginBottom: '1rem', position: 'relative', zIndex: 2 }}>{getLabel(scoreRounded)}</div>
 
                                 <div className="progress-bar-wrap">
                                     <div className="progress-bar-fill" style={{ width: '0%' }} id={`bar-${r.id}`} />

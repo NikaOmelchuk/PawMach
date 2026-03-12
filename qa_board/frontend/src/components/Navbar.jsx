@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { toggleTheme, sharePage } from '../api';
+import { toggleTheme, sharePage, getMediaUrl } from '../api';
+import HeartPawsLogo from './HeartPawsLogo';
 
 const ADMIN_EMAIL = 'omelchuknika@gmail.com';
 
@@ -30,7 +31,7 @@ export default function Navbar({ title, backLink, activeLink }) {
     };
 
     const avatarEl = user?.avatar ? (
-        <img src={user.avatar} className="user-avatar" style={{ objectFit: 'cover' }} title="Профіль" />
+        <img src={getMediaUrl(user.avatar)} className="user-avatar" style={{ objectFit: 'cover' }} title="Профіль" />
     ) : (
         <div className="user-avatar" title="Профіль">
             {(user?.username || 'U')[0].toUpperCase()}
@@ -41,7 +42,7 @@ export default function Navbar({ title, backLink, activeLink }) {
         <nav className="navbar">
             { }
             <Link to="/dashboard" className="navbar-brand">
-                <span className="brand-icon">🐱</span> PawMatch
+                <HeartPawsLogo width={28} height={28} style={{ marginRight: '8px' }} /> PawMatch
             </Link>
 
             { }

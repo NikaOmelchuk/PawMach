@@ -26,6 +26,8 @@ export async function apiFetch(path, options = {}) {
     const csrfToken = getCookie('csrftoken');
     const headers = {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
         'ngrok-skip-browser-warning': 'true',
         ...(token ? { Authorization: `Token ${token}` } : {}),
         ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
@@ -72,6 +74,18 @@ export function isLoggedIn() {
     return !!getToken();
 }
 
+export function getMediaUrl(path) {
+    if (!path) return null;
+    if (path.startsWith('http://localhost') || path.startsWith('http://127.0.0.1')) {
+        try {
+            return new URL(path).pathname;
+        } catch {
+            return path;
+        }
+    }
+    return path;
+}
+
 export function showToast(message, type = 'info') {
     let container = document.querySelector('.toast-container');
     if (!container) {
@@ -106,12 +120,23 @@ export function toggleTheme() {
 export async function sharePage() {
     const url = window.location.href;
     const title = document.title;
+
+    let shared = false;
     if (navigator.share) {
         try {
             await navigator.share({ title, url });
-        } catch { }
-    } else {
-        navigator.clipboard.writeText(url);
-        showToast('📍 Посилання скопійовано!', 'info');
+            shared = true;
+        } catch (err) {
+            console.warn('Share API failed or rejected, falling back to clipboard.', err);
+        }
+    }
+
+    if (!shared) {
+        try {
+            await navigator.clipboard.writeText(url);
+            showToast('Посилання скопійовано!', 'info');
+        } catch (err) {
+            showToast('Не вдалося скопіювати посилання', 'error');
+        }
     }
 }

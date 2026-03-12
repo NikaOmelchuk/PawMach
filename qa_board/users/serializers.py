@@ -42,8 +42,6 @@ class UserLoginSerializer(serializers.Serializer):
         return data
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    
-    avatar = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
@@ -53,10 +51,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('id', 'email', 'date_joined')
 
-    def get_avatar(self, obj):
-        if obj.avatar:
-            return obj.avatar.url
-        return None
 
 class UserShortSerializer(serializers.ModelSerializer):
     

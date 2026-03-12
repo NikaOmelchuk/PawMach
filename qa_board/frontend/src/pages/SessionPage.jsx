@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { apiFetch, showToast, getCurrentUser } from '../api';
+import { apiFetch, showToast, getCurrentUser, getMediaUrl } from '../api';
 import { useAuth } from '../context/AuthContext';
 
 export default function SessionPage() {
@@ -21,16 +21,23 @@ export default function SessionPage() {
     useEffect(() => {
         syncProfile();
         loadSession();
+        const interval = setInterval(loadSession, 3000);
+        return () => clearInterval(interval);
     }, [id]);
 
     async function loadSession() {
         try {
             const sess = await apiFetch(`/sessions/${id}/`);
+            if (sess.status === 'completed') {
+                navigate(`/results/${id}`);
+                return;
+            }
             setSession(sess);
+            if (sess.has_submitted) setSubmitted(true);
             const survey = await apiFetch(`/surveys/${sess.survey.id}/`);
             setQuestions(survey.questions || []);
         } catch (err) {
-            showToast(err.message, 'error');
+            console.error(err);
         } finally {
             setLoading(false);
         }
@@ -99,9 +106,9 @@ export default function SessionPage() {
             <Navbar title={session?.survey?.title} />
             <div className="page-wrapper" style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: '2rem', alignItems: 'start' }}>
 
-                {}
+                { }
                 <div>
-                    {}
+                    { }
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--lavender-mid)' }}>Прогрес</span>
                         <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}>{currentQ + 1} / {total}</span>
@@ -110,13 +117,13 @@ export default function SessionPage() {
                         <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
                     </div>
 
-                    {}
+                    { }
                     {q && (
                         <div className="card" style={{ marginTop: '1rem' }}>
                             <div className="question-number">Питання {currentQ + 1}</div>
                             <div className="question-text">{q.text}</div>
 
-                            {}
+                            { }
                             {q.question_type === 'scale' ? (
                                 <ScaleQuestion
                                     q={q}
@@ -131,7 +138,7 @@ export default function SessionPage() {
                                 />
                             )}
 
-                            {}
+                            { }
                             {!submitted && (
                                 <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', justifyContent: 'space-between' }}>
                                     <button className="btn btn-outline" onClick={() => navigate_q(-1)} disabled={currentQ === 0}>← Назад</button>
@@ -154,7 +161,7 @@ export default function SessionPage() {
                         </div>
                     )}
 
-                    {}
+                    { }
                     {isOwner && session?.status !== 'completed' && (
                         <div className="mt-3">
                             <div className="card" style={{ background: 'linear-gradient(135deg,rgba(124,58,237,0.08),rgba(167,139,250,0.12))', textAlign: 'center' }}>
@@ -169,7 +176,7 @@ export default function SessionPage() {
                     )}
                 </div>
 
-                {}
+                { }
                 <div style={{ position: 'sticky', top: 80, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <div className="card" style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem' }}>КОД СЕСІЇ</div>
@@ -183,9 +190,13 @@ export default function SessionPage() {
                         <div className="card-title mb-2">👥 Учасники</div>
                         {session?.participants?.map(p => (
                             <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.3rem 0' }}>
-                                <div className="user-avatar" style={{ width: 28, height: 28, fontSize: '0.75rem' }}>
-                                    {p.username[0].toUpperCase()}
-                                </div>
+                                {p.avatar ? (
+                                    <img src={getMediaUrl(p.avatar)} alt="avatar" className="user-avatar" style={{ width: 28, height: 28, objectFit: 'cover' }} />
+                                ) : (
+                                    <div className="user-avatar" style={{ width: 28, height: 28, fontSize: '0.75rem' }}>
+                                        {p.username[0].toUpperCase()}
+                                    </div>
+                                )}
                                 <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-mid)' }}>{p.username}</span>
                                 {p.id === session.created_by?.id && <span className="badge" style={{ fontSize: '0.65rem' }}>Орг.</span>}
                             </div>

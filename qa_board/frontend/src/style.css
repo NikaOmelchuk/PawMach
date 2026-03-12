@@ -667,16 +667,6 @@ input[type=range]::-webkit-slider-thumb:hover {
   overflow: hidden;
 }
 
-.result-card::before {
-  content: '🐱';
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  font-size: 5rem;
-  opacity: 0.06;
-  transform: rotate(15deg);
-}
-
 .compat-score {
   font-size: 3.5rem;
   font-weight: 800;

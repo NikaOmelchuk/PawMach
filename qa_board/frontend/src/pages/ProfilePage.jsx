@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { apiFetch, getToken, getCookie, showToast } from '../api';
+import { apiFetch, getToken, getCookie, showToast, getMediaUrl } from '../api';
 import { useAuth } from '../context/AuthContext';
 
 export default function ProfilePage() {
@@ -36,7 +36,7 @@ export default function ProfilePage() {
                 birth_date: data.birth_date || '',
                 bio: data.bio || '',
             });
-            if (data.avatar) setAvatarPreview(data.avatar);
+            if (data.avatar) setAvatarPreview(getMediaUrl(data.avatar));
         } catch {
             showToast('Помилка завантаження профілю', 'error');
         } finally {
@@ -106,7 +106,7 @@ export default function ProfilePage() {
                     <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Налаштування профілю</h2>
 
                     <form onSubmit={handleSave}>
-                        {}
+                        { }
                         <div style={{ textAlign: 'center', marginBottom: 30 }}>
                             {avatarPreview ? (
                                 <img src={avatarPreview} alt="avatar"
