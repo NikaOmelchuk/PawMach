@@ -9,6 +9,7 @@ import ResultsPage from './pages/ResultsPage';
 import ProfilePage from './pages/ProfilePage';
 import LabServicesPage from './pages/LabServicesPage';
 import AboutPage from './pages/AboutPage';
+import GlobalChat from './components/GlobalChat';
 
 export default function App() {
   return (
@@ -39,9 +40,9 @@ export default function App() {
             <ProtectedRoute><AboutPage /></ProtectedRoute>
           } />
 
-          { }
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <GlobalChat />
       </BrowserRouter>
     </AuthProvider>
   );

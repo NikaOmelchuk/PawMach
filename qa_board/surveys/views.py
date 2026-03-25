@@ -129,6 +129,21 @@ class SurveySessionViewSet(viewsets.ModelViewSet):
             )
             saved += 1
 
+        from channels.layers import get_channel_layer
+        from asgiref.sync import async_to_sync
+        
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'chat_{session.id}',
+            {
+                'type': 'survey_progress',
+                'username': request.user.username,
+                'message': f'{request.user.username} щойно завершив відповідати! 🎉',
+                'is_system': True,
+                'submitted': True,
+            }
+        )
+
         return Response({
             'saved': saved,
             'errors': errors,

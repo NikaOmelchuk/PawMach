@@ -39,9 +39,9 @@ class CustomUserAdmin(UserAdmin):
         return CustomUserChangeListForm
 
     list_per_page = 100
-    list_display = ('email', 'username', 'first_name', 'last_name', 'gender', 'delete_after_days', 'is_staff', 'is_active')
+    list_display = ('email', 'username', 'first_name', 'last_name', 'gender', 'delete_after_days', 'is_staff', 'is_active', 'is_online', 'last_seen')
     list_display_links = ('email',)
-    list_filter = ('gender', 'is_staff', 'is_active', 'delete_after_days')
+    list_filter = ('gender', 'is_staff', 'is_active', 'delete_after_days', 'is_online')
     search_fields = ('email', 'username', 'first_name', 'last_name')
     ordering = ('email',)
 

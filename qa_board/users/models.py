@@ -30,6 +30,8 @@ class CustomUser(AbstractUser):
         choices=DELETE_POLICY_CHOICES, default=0, verbose_name='Автовидалення після бездії (днів)',
         help_text='Кількість днів після останнього входу, коли акаунт буде видалено автоматично.'
     )
+    is_online = models.BooleanField(default=False, verbose_name='Онлайн')
+    last_seen = models.DateTimeField(null=True, blank=True, verbose_name='Останній раз онлайн')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
