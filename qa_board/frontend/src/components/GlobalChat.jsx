@@ -4,8 +4,7 @@ import { getToken, showToast, getCurrentUser } from '../api';
 
 export default function GlobalChat() {
     const location = useLocation();
-    
-    // Extract session ID from /session/:id or /results/:id
+
     const match = location.pathname.match(/^\/(?:session|results)\/([^/]+)/);
     const id = match ? match[1] : null;
 
@@ -56,10 +55,10 @@ export default function GlobalChat() {
             setUnread(c => (document.visibilityState === 'hidden' || !chatOpen) ? c + 1 : 0);
         };
 
-        ws.onerror = () => {};
-        ws.onclose = () => {};
+        ws.onerror = () => { };
+        ws.onclose = () => { };
 
-        return () => {};
+        return () => { };
     }, [id]);
 
     useEffect(() => {

@@ -11,6 +11,7 @@ export default function ResultsPage() {
     const navigate = useNavigate();
     const { syncProfile } = useAuth();
     const [sessionTitle, setSessionTitle] = useState('Результати сумісності');
+    const [sessionCode, setSessionCode] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(true);
     const scoreRefs = useRef({});
@@ -27,6 +28,7 @@ export default function ResultsPage() {
                 apiFetch(`/sessions/${id}/results/`),
             ]);
             setSessionTitle(sess.survey?.title || 'Результати');
+            setSessionCode(sess.session_code);
             setResults(res);
         } catch (err) {
             showToast(err.message, 'error');
@@ -75,6 +77,11 @@ export default function ResultsPage() {
                 <div className="page-header text-center">
                     <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>💜</div>
                     <h1 className="page-title">{sessionTitle}</h1>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                        <span className="badge" style={{ padding: '0.4rem 1rem', fontSize: '0.9rem', letterSpacing: '0.1em' }}>
+                            КОД: {sessionCode}
+                        </span>
+                    </div>
                     <p className="page-subtitle">Ось наскільки ви схожі між собою</p>
                 </div>
 

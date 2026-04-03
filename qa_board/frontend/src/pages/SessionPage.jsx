@@ -108,9 +108,16 @@ export default function SessionPage() {
     return (
         <div>
             <Navbar title={session?.survey?.title} />
-            <div className="page-wrapper" style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: '2rem', alignItems: 'start' }}>
+            <div className="page-wrapper session-layout">
 
-                <div>
+                <div className="session-main-col">
+                    <div className="session-code-mobile-top">
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>КОД СЕСІЇ</span>
+                        <div className="session-code-display session-code-sm" title="Клікни щоб скопіювати" onClick={copyCode} style={{ cursor: 'pointer', fontSize: '1.2rem', padding: '0.3rem 0.9rem', margin: '0.3rem 0 0.15rem' }}>
+                            {session?.session_code || '—'}
+                        </div>
+                    </div>
+
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--lavender-mid)' }}>Прогрес</span>
                         <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}>{currentQ + 1} / {total}</span>
@@ -139,7 +146,7 @@ export default function SessionPage() {
                             )}
 
                             {!submitted && (
-                                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', justifyContent: 'space-between' }}>
+                                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                                     <button className="btn btn-outline" onClick={() => navigate_q(-1)} disabled={currentQ === 0}>← Назад</button>
                                     <div style={{ display: 'flex', gap: '0.75rem' }}>
                                         {!isLast && <button className="btn btn-primary" onClick={() => navigate_q(1)}>Далі →</button>}
@@ -174,7 +181,7 @@ export default function SessionPage() {
                     )}
                 </div>
 
-                <div style={{ position: 'sticky', top: 80, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="session-sidebar">
                     <div className="card" style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem' }}>КОД СЕСІЇ</div>
                         <div className="session-code-display" title="Клікни щоб скопіювати" onClick={copyCode} style={{ cursor: 'pointer' }}>
@@ -187,20 +194,29 @@ export default function SessionPage() {
                         <div className="card-title mb-2">👥 Учасники</div>
                         {session?.participants?.map(p => (
                             <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.3rem 0' }}>
-                                {p.avatar ? (
-                                    <img src={getMediaUrl(p.avatar)} alt="avatar" className="user-avatar" style={{ width: 28, height: 28, objectFit: 'cover' }} />
-                                ) : (
-                                    <div className="user-avatar" style={{ width: 28, height: 28, fontSize: '0.75rem' }}>
-                                        {p.username[0].toUpperCase()}
-                                    </div>
-                                )}
-                                <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-mid)' }}>{p.username}</span>
+                                <div style={{ position: 'relative' }}>
+                                    {p.avatar ? (
+                                        <img src={getMediaUrl(p.avatar)} alt="avatar" className="user-avatar" style={{ width: 28, height: 28, objectFit: 'cover' }} />
+                                    ) : (
+                                        <div className="user-avatar" style={{ width: 28, height: 28, fontSize: '0.75rem' }}>
+                                            {p.username[0].toUpperCase()}
+                                        </div>
+                                    )}
+                                    {p.is_online && (
+                                        <div style={{
+                                            position: 'absolute', bottom: 0, right: 0, width: 10, height: 10,
+                                            borderRadius: '50%', backgroundColor: '#10B981', border: '2px solid var(--card-bg)',
+                                            boxShadow: '0 0 4px rgba(16,185,129,0.5)'
+                                        }} title="В мережі" />
+                                    )}
+                                </div>
+                                <span style={{ fontSize: '0.875rem', fontWeight: 600, color: p.is_online ? 'var(--text-dark)' : 'var(--text-mid)' }}>{p.username}</span>
                                 {session?.submitted_users?.includes(p.username) && <span title="Відповів" style={{ fontSize: '0.85rem' }}>✅</span>}
                                 {p.id === session.created_by?.id && <span className="badge" style={{ fontSize: '0.65rem' }}>Орг.</span>}
                             </div>
                         ))}
                     </div>
-            </div>
+                </div>
             </div>
         </div>
     );
@@ -232,3 +248,4 @@ function ChoiceQuestion({ q, selected, onChange }) {
         </div>
     );
 }
+

@@ -60,6 +60,7 @@ export default function SurveyPage() {
             setTimeout(() => navigate(`/session/${data.id}`), 600);
         } catch (err) {
             showToast(err.message, 'error');
+        } finally {
             setJoining(false);
         }
     }
@@ -76,7 +77,7 @@ export default function SurveyPage() {
             <div className="page-wrapper">
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '2rem', alignItems: 'start' }}>
 
-                    {}
+                    { }
                     <div>
                         <div className="mb-2">
                             <span className="badge">{survey?.category?.icon || '📋'} {survey?.category?.name}</span>
@@ -105,7 +106,7 @@ export default function SurveyPage() {
                         </div>
                     </div>
 
-                    {}
+                    { }
                     <div style={{ position: 'sticky', top: 80, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div className="card" style={{ textAlign: 'center' }}>
                             <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🚀</div>

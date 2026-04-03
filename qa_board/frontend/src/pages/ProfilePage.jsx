@@ -13,6 +13,8 @@ export default function ProfilePage() {
     const [saving, setSaving] = useState(false);
     const [avatarFile, setAvatarFile] = useState(null);
     const [avatarPreview, setAvatarPreview] = useState(null);
+    const [activeSessions, setActiveSessions] = useState([]);
+    const [leavingId, setLeavingId] = useState(null);
 
     const [form, setForm] = useState({
         username: '', email: '', first_name: '', last_name: '',
@@ -21,6 +23,7 @@ export default function ProfilePage() {
 
     useEffect(() => {
         loadProfile();
+        loadActiveSessions();
     }, []);
 
     async function loadProfile() {
@@ -41,6 +44,34 @@ export default function ProfilePage() {
             showToast('Помилка завантаження профілю', 'error');
         } finally {
             setLoading(false);
+        }
+    }
+
+    async function loadActiveSessions() {
+        try {
+            const data = await apiFetch('/sessions/');
+            const sessions = data.results || data;
+            setActiveSessions(sessions.filter(s => s.status !== 'completed'));
+        } catch { }
+    }
+
+    async function leaveSession(sess) {
+        const isOrganizer = sess.created_by?.id === profile?.id;
+        const confirmed = window.confirm(
+            isOrganizer
+                ? `Ви організатор. Сесія "${sess.survey?.title}" буде видалена для всіх учасників. Продовжити?`
+                : `Покинути сесію "${sess.survey?.title}"?`
+        );
+        if (!confirmed) return;
+        setLeavingId(sess.id);
+        try {
+            await apiFetch(`/sessions/${sess.id}/leave/`, { method: 'DELETE' });
+            setActiveSessions(prev => prev.filter(s => s.id !== sess.id));
+            showToast(isOrganizer ? 'Сесію видалено 🗑' : 'Ви покинули сесію 🚪', 'success');
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            setLeavingId(null);
         }
     }
 
@@ -106,7 +137,7 @@ export default function ProfilePage() {
                     <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Налаштування профілю</h2>
 
                     <form onSubmit={handleSave}>
-                        { }
+
                         <div style={{ textAlign: 'center', marginBottom: 30 }}>
                             {avatarPreview ? (
                                 <img src={avatarPreview} alt="avatar"
@@ -176,6 +207,53 @@ export default function ProfilePage() {
                         </button>
                     </form>
                 </div>
+
+
+                {activeSessions.length > 0 && (
+                    <div style={{ maxWidth: 600, margin: '0 auto 40px' }}>
+                        <div className="card" style={{ padding: '1.25rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.9rem' }}>
+                                <span style={{ fontSize: '1rem' }}>🚀</span>
+                                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--lavender-deep)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    Активні сесії ({activeSessions.length})
+                                </span>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                {activeSessions.map(sess => {
+                                    const isOrg = sess.created_by?.id === profile?.id;
+                                    const leaving = leavingId === sess.id;
+                                    return (
+                                        <div key={sess.id} className="active-session-row">
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, minWidth: 0 }}>
+                                                <span className="session-dot-live" title="Активна" />
+                                                <span className="session-code-pill">{sess.session_code}</span>
+                                                <span className="session-title-inline" title={sess.survey?.title}>
+                                                    {sess.survey?.title}
+                                                </span>
+                                            </div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+                                                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                                                    👥 {sess.participants?.length ?? '—'}
+                                                </span>
+                                                {isOrg && (
+                                                    <span className="badge" style={{ fontSize: '0.6rem', padding: '0.1rem 0.45rem' }}>Орг.</span>
+                                                )}
+                                                <button
+                                                    className="btn-session-leave"
+                                                    onClick={() => leaveSession(sess)}
+                                                    disabled={leaving}
+                                                    title={isOrg ? 'Видалити' : 'Покинути'}
+                                                >
+                                                    {leaving ? '…' : isOrg ? '🗑' : '🚪'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

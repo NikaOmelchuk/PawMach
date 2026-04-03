@@ -9,6 +9,7 @@ export default function DashboardPage() {
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
     const [surveys, setSurveys] = useState([]);
+    const [mySessions, setMySessions] = useState([]);
     const [activeCategory, setActiveCategory] = useState(null);
     const [loadingSurveys, setLoadingSurveys] = useState(true);
     const [joinCode, setJoinCode] = useState('');
@@ -18,7 +19,15 @@ export default function DashboardPage() {
         syncProfile();
         loadCategories();
         loadSurveys(null);
+        loadMySessions();
     }, []);
+
+    async function loadMySessions() {
+        try {
+            const data = await apiFetch('/sessions/');
+            setMySessions(data.results || data);
+        } catch { }
+    }
 
     async function loadCategories() {
         try {
@@ -88,6 +97,26 @@ export default function DashboardPage() {
                         </button>
                     </form>
                 </div>
+
+                {mySessions.length > 0 && (
+                    <div className="mb-4">
+                        <h2 className="section-title mb-2">Мої активні сессії 🚀</h2>
+                        <div className="grid-3">
+                            {mySessions.filter(s => s.status !== 'completed').map(s => (
+                                <div key={s.id} className="card" style={{ padding: '1rem', borderLeft: '4px solid var(--lavender-deep)' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                        <span className="badge badge-success">ACTIVE</span>
+                                        <span style={{ fontWeight: 800, color: 'var(--lavender-deep)', letterSpacing: '0.1em' }}>{s.session_code}</span>
+                                    </div>
+                                    <div style={{ fontWeight: 700, marginBottom: '0.5rem' }}>{s.survey?.title}</div>
+                                    <button className="btn btn-primary btn-sm btn-full" onClick={() => navigate(`/session/${s.id}`)}>
+                                        Continue →
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {}
                 <div className="filter-tabs">

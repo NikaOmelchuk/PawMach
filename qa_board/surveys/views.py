@@ -181,3 +181,25 @@ class SurveySessionViewSet(viewsets.ModelViewSet):
         session = self.get_object()
         results = session.results.select_related('user1', 'user2').all()
         return Response(CompatibilityResultSerializer(results, many=True).data)
+
+    @extend_schema(
+        summary='Покинути сесію',
+        responses={200: OpenApiResponse(description='Успішно покинуто сесію')}
+    )
+    @action(detail=True, methods=['delete'], url_path='leave')
+    def leave(self, request, pk=None):
+
+        session = self.get_object()
+
+        if request.user not in session.participants.all():
+            return Response({'detail': 'Ви не є учасником цієї сесії.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if session.status == 'completed':
+            return Response({'detail': 'Сесія вже завершена — неможливо покинути.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if request.user == session.created_by:
+            session.delete()
+            return Response({'detail': 'Сесію видалено (ви були організатором).'})
+
+        session.participants.remove(request.user)
+        return Response({'detail': 'Ви успішно покинули сесію.'})

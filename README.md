@@ -16,5 +16,10 @@
 - Клієнтська частина на React зі стилізованим та адаптивним інтерфейсом.
 - REST API для інтеграції з мобільним застосунком (React Native).
 
-## Звіт на Google Drive
-[Посилання на звіт](https://docs.google.com/document/d/1ehknBoS_pqrK-jSZcoqBU-Yn3hjH1Dz-80HhnYjm5bk/edit?usp=sharing)
+## Звіти на Google Drive
+
+**Посилання на звіти з дисципліни «Технологія розробки Web-додатків»**
+
+[Посилання на Лабораторну роботу 1](https://docs.google.com/document/d/1ehknBoS_pqrK-jSZcoqBU-Yn3hjH1Dz-80HhnYjm5bk/edit?usp=sharing)
+
+[Посилання на Лабораторну роботу 2](https://docs.google.com/document/d/1NZvT3jBGCAVFBO1DL7YQV7Yy3_gVZg_vpmgPuruMHTo/edit?usp=sharing)
