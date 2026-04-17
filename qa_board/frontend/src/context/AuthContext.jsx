@@ -35,7 +35,7 @@ export function AuthProvider({ children }) {
         } else {
             disconnectOnlineWs();
         }
-        return () => {};
+        return () => { };
     }, [token]);
 
     const login = useCallback((newToken, newUser) => {

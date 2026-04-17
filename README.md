@@ -10,11 +10,13 @@
 **Основні можливості:**
 - Авторизація та профілі користувачів (Token Auth).
 - Створення кімнат (сесій) для спільного проходження опитувань за кодом.
-- **Real-time оновлення** прогресу проходження учасниками (WebSockets через Django Channels + Redis).
+- **Real-time оновлення** прогресу проходження учасниками (WebSockets через Django Channels).
 - **Глобальний чат** реального часу для учасників сесії.
 - Автоматичний розрахунок сумісності у відсотках на основі спільних відповідей та інтересів.
 - Клієнтська частина на React зі стилізованим та адаптивним інтерфейсом.
 - REST API для інтеграції з мобільним застосунком (React Native).
+
+Проект покритий модульними тестами Jest та End-to-End тестами Cypress з рівнем покриття понад 80%.
 
 ## Звіти на Google Drive
 
@@ -23,3 +25,9 @@
 [Посилання на Лабораторну роботу 1](https://docs.google.com/document/d/1ehknBoS_pqrK-jSZcoqBU-Yn3hjH1Dz-80HhnYjm5bk/edit?usp=sharing)
 
 [Посилання на Лабораторну роботу 2](https://docs.google.com/document/d/1NZvT3jBGCAVFBO1DL7YQV7Yy3_gVZg_vpmgPuruMHTo/edit?usp=sharing)
+
+**Посилання на звіти з дисципліни «Програмування інтерфейсів користувача»**
+
+[Посилання на Лабораторну роботу 1](https://docs.google.com/document/d/1GnSR_JhhzDvcZ6UlqQLdLGmVQOnkIRsTD0zI-oTVSrA/edit?usp=sharing)
+
+[Посилання на Лабораторну роботу 2](https://docs.google.com/document/d/172ZiYufY8x-iXwxzce0JP3KXbUOureC95gV0XbRad2w/edit?usp=sharing)
