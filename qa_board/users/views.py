@@ -88,3 +88,16 @@ class ProfileView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
+class TriggerEmailView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request):
+        subject = request.data.get('subject', 'Test Subject')
+        message = request.data.get('message', 'Test Message')
+        recipients = request.data.get('recipients', [])
+        
+        from .tasks import send_bulk_email_task
+        send_bulk_email_task.delay(subject, message, recipients)
+        
+        return Response({'status': 'Email task queued'})
+

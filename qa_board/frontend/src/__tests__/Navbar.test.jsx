@@ -65,11 +65,9 @@ describe('Navbar', () => {
         renderNavbar();
         const menuBtn = screen.getByLabelText('Меню');
 
-        // Відкрити меню
         fireEvent.click(menuBtn);
         expect(screen.getByText('✕')).toBeInTheDocument();
 
-        // Закрити меню
         fireEvent.click(menuBtn);
         expect(screen.getByText('☰')).toBeInTheDocument();
     });
@@ -79,7 +77,6 @@ describe('Navbar', () => {
         renderNavbar();
 
         const logoutBtns = screen.getAllByText(/Вийти/);
-        // натискаємо на десктопну кнопку виходу
         await act(async () => {
             fireEvent.click(logoutBtns[0]);
         });
@@ -93,7 +90,6 @@ describe('Navbar', () => {
         renderNavbar();
         const themeBtns = screen.getAllByTitle('Змінити тему');
         fireEvent.click(themeBtns[0]);
-        // toggleTheme is executed synchronously when clicked
         expect(toggleTheme).toHaveBeenCalled();
     });
 

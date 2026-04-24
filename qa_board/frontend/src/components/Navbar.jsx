@@ -53,6 +53,7 @@ export default function Navbar({ title, backLink, activeLink }) {
                     <>
                         <li><Link to="/dashboard" className={`nav-link${activeLink === 'dashboard' ? ' active' : ''}`}>Опитування</Link></li>
                         {isAdmin && <li><Link to="/services" className={`nav-link${activeLink === 'services' ? ' active' : ''}`}>🛠️ Сервіси</Link></li>}
+                        {isAdmin && <li><Link to="/admin/tasks" className={`nav-link${activeLink === 'admin-tasks' ? ' active' : ''}`}>⚙️ Задачі</Link></li>}
                         <li><Link to="/about" className={`nav-link${activeLink === 'about' ? ' active' : ''}`}>Про додаток</Link></li>
                         <li><Link to="/profile" className={`nav-link${activeLink === 'profile' ? ' active' : ''}`}>Мій профіль</Link></li>
                     </>
@@ -114,6 +115,7 @@ export default function Navbar({ title, backLink, activeLink }) {
                         <>
                             <Link to="/dashboard" className={`mobile-nav-link${activeLink === 'dashboard' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>🗳️ Опитування</Link>
                             {isAdmin && <Link to="/services" className={`mobile-nav-link${activeLink === 'services' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>🛠️ Сервіси</Link>}
+                            {isAdmin && <Link to="/admin/tasks" className={`mobile-nav-link${activeLink === 'admin-tasks' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>⚙️ Задачі</Link>}
                             <Link to="/about" className={`mobile-nav-link${activeLink === 'about' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>🐱 Про додаток</Link>
                             <Link to="/profile" className={`mobile-nav-link${activeLink === 'profile' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>👤 Мій профіль</Link>
                         </>

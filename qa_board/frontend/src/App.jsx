@@ -8,6 +8,7 @@ import SessionPage from './pages/SessionPage';
 import ResultsPage from './pages/ResultsPage';
 import ProfilePage from './pages/ProfilePage';
 import LabServicesPage from './pages/LabServicesPage';
+import AdminTasksPage from './pages/AdminTasksPage';
 import AboutPage from './pages/AboutPage';
 import GlobalChat from './components/GlobalChat';
 
@@ -38,6 +39,9 @@ export default function App() {
           } />
           <Route path="/about" element={
             <ProtectedRoute><AboutPage /></ProtectedRoute>
+          } />
+          <Route path="/admin/tasks" element={
+            <ProtectedRoute><AdminTasksPage /></ProtectedRoute>
           } />
 
           <Route path="*" element={<Navigate to="/" replace />} />

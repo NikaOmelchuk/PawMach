@@ -60,22 +60,17 @@ describe('DashboardPage', () => {
             renderDashboard();
         });
 
-        // Мої активні сессії
         expect(screen.getByText('XYZ789')).toBeInTheDocument();
-        
-        // Категорії
+
         expect(screen.getByText('🐱 Кіт')).toBeInTheDocument();
-        
-        // Опитування
+
         expect(screen.getAllByText('Мій Тест').length).toBeGreaterThan(0);
-        
-        // Перемикання категорії
+
         await act(async () => {
             fireEvent.click(screen.getByText('🐱 Кіт'));
         });
         expect(apiFetch).toHaveBeenCalledWith('/surveys/?category=1');
-        
-        // Почати опитування
+
         await act(async () => {
             fireEvent.click(screen.getAllByText('Почати →')[0]);
         });

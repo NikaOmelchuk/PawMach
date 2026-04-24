@@ -5,7 +5,8 @@ from .models import (
     ChatMessage, Article, Comment, Announcement, AnnouncementReaction,
     QnaQuestion, QnaAnswer, TodoTask, Timer,
     LabPoll, LabPollOption, LabPollVote,
-    ScoreEntry, Quiz, QuizQuestion, QuizChoice, QuizSubmission
+    ScoreEntry, Quiz, QuizQuestion, QuizChoice, QuizSubmission,
+    AsyncTaskResult
 )
 from .serializers import (
     ChatMessageSerializer, ArticleSerializer, CommentSerializer,
@@ -14,7 +15,8 @@ from .serializers import (
     TodoTaskSerializer, TimerSerializer,
     LabPollSerializer, LabPollOptionSerializer, LabPollVoteSerializer,
     ScoreEntrySerializer, QuizSerializer, QuizQuestionSerializer,
-    QuizChoiceSerializer, QuizSubmissionSerializer
+    QuizChoiceSerializer, QuizSubmissionSerializer,
+    AsyncTaskResultSerializer
 )
 
 class ChatMessageViewSet(viewsets.ModelViewSet):
@@ -185,6 +187,17 @@ class QuizViewSet(viewsets.ModelViewSet):
             quiz=quiz, user_id=request.user.id, score=score
         )
         return Response({'score': score, 'submission_id': submission.id})
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAdminUser])
+    def trigger_report(self, request, pk=None):
+        from .tasks import generate_compatibility_report_task
+        generate_compatibility_report_task.delay(pk)
+        return Response({'status': 'Report generation queued'})
+
+class AsyncTaskResultViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = AsyncTaskResultSerializer
+    queryset = AsyncTaskResult.objects.all()
+    permission_classes = [permissions.IsAdminUser]
 
 class QuizQuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuizQuestionSerializer

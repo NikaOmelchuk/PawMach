@@ -61,8 +61,7 @@ describe('AuthPage', () => {
         const themeBtn = screen.getByTitle('Змінити тему');
         expect(themeBtn).toBeInTheDocument();
         fireEvent.click(themeBtn);
-        // We mocked toggleTheme, so we don't strictly test localStorage here, but test it was clicked
-        expect(themeBtn).toBeInTheDocument();
+       expect(themeBtn).toBeInTheDocument();
     });
 
     test('кнопка "Увійти" присутня', () => {
@@ -83,8 +82,7 @@ describe('AuthPage', () => {
         fireEvent.submit(screen.getByRole('button', { name: /🐾 Увійти/i }));
 
         expect(screen.getByText('Вхід...')).toBeInTheDocument();
-        // Wait for async actions
-        await screen.findByText('🐾 Увійти');
+       await screen.findByText('🐾 Увійти');
         expect(apiFetch).toHaveBeenCalledWith('/auth/login/', expect.any(Object));
     });
 
@@ -110,8 +108,7 @@ describe('AuthPage', () => {
         fireEvent.click(screen.getByText('Реєстрація'));
 
         const inputs = screen.getAllByRole('textbox');
-        // username, email
-        fireEvent.change(inputs[0], { target: { value: 'test' } });
+       fireEvent.change(inputs[0], { target: { value: 'test' } });
         fireEvent.change(inputs[1], { target: { value: 'test@test.com' } });
 
         const passInput = screen.getByPlaceholderText('мін. 8 символів');

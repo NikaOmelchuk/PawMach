@@ -93,3 +93,12 @@ class QuizSubmission(models.Model):
     user_id = models.IntegerField()
     score = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
+class AsyncTaskResult(models.Model):
+    task_name = models.CharField(max_length=255)
+    task_data = models.TextField()
+    result = models.TextField()
+    completed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-completed_at']

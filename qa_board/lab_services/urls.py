@@ -5,7 +5,8 @@ from .views import (
     AnnouncementViewSet, QnaQuestionViewSet, QnaAnswerViewSet,
     TodoTaskViewSet, TimerViewSet,
     LabPollViewSet, LabPollOptionViewSet,
-    ScoreEntryViewSet, QuizViewSet, QuizQuestionViewSet, QuizChoiceViewSet
+    ScoreEntryViewSet, QuizViewSet, QuizQuestionViewSet, QuizChoiceViewSet,
+    AsyncTaskResultViewSet
 )
 
 router = DefaultRouter()
@@ -23,6 +24,7 @@ router.register(r'scores', ScoreEntryViewSet, basename='score')
 router.register(r'quizzes', QuizViewSet, basename='quiz')
 router.register(r'quizzes/questions', QuizQuestionViewSet, basename='quiz-question')
 router.register(r'quizzes/choices', QuizChoiceViewSet, basename='quiz-choice')
+router.register(r'async-tasks', AsyncTaskResultViewSet, basename='async-task')
 
 urlpatterns = [
     path('', include(router.urls)),

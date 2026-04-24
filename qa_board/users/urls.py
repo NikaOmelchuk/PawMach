@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AppInfoView, RegisterView, LoginView, LogoutView, ProfileView
+from .views import AppInfoView, RegisterView, LoginView, LogoutView, ProfileView, TriggerEmailView
 
 urlpatterns = [
     path('app/', AppInfoView.as_view(), name='app-info'),
@@ -7,4 +7,5 @@ urlpatterns = [
     path('auth/login/', LoginView.as_view(), name='login'),
     path('auth/logout/', LogoutView.as_view(), name='logout'),
     path('auth/profile/', ProfileView.as_view(), name='profile'),
+    path('tasks/trigger-email/', TriggerEmailView.as_view(), name='trigger-email'),
 ]

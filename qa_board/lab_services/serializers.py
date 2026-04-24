@@ -3,7 +3,8 @@ from .models import (
     ChatMessage, Article, Comment, Announcement, AnnouncementReaction,
     QnaQuestion, QnaAnswer, TodoTask, Timer,
     LabPoll, LabPollOption, LabPollVote,
-    ScoreEntry, Quiz, QuizQuestion, QuizChoice, QuizSubmission
+    ScoreEntry, Quiz, QuizQuestion, QuizChoice, QuizSubmission,
+    AsyncTaskResult
 )
 
 class ChatMessageSerializer(serializers.ModelSerializer):
@@ -141,3 +142,8 @@ class QuizSubmissionSerializer(serializers.ModelSerializer):
         model = QuizSubmission
         fields = ['id', 'quiz', 'user_id', 'score', 'created_at']
         read_only_fields = ['id', 'user_id', 'created_at']
+
+class AsyncTaskResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AsyncTaskResult
+        fields = '__all__'
