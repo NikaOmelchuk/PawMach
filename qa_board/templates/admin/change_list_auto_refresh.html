@@ -3,9 +3,21 @@
 {% block object-tools-items %}
 {{ block.super }}
 <li>
+    <a href="trigger-email/" onclick="return confirm('Надіслати email-запрошення ВСІМ зареєстрованим користувачам?')"
+        style="background:#2e7d32;padding:10px 16px;border-radius:4px;color:white;text-decoration:none;font-weight:bold;display:inline-block;">
+        📧 Надіслати Email усім
+    </a>
+</li>
+<li>
+    <a href="trigger-report/" onclick="return confirm('Запустити генерацію звіту про сумісність (10 сек)?')"
+        style="background:#1565c0;padding:10px 16px;border-radius:4px;color:white;text-decoration:none;font-weight:bold;display:inline-block;">
+        📊 Генерувати звіт
+    </a>
+</li>
+<li>
     <button type="button" onclick="location.reload();"
-        style="background: #79aec8; padding: 10px 15px; border-radius: 4px; color: white; border: none; cursor: pointer; font-weight: bold; margin-left: 10px;">
-        🔄 Оновити дані
+        style="background:#79aec8;padding:10px 15px;border-radius:4px;color:white;border:none;cursor:pointer;font-weight:bold;">
+        🔄 Оновити
     </button>
 </li>
 {% endblock %}
@@ -14,19 +26,17 @@
 {{ block.super }}
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function () {
-        // Додаємо чекбокс для автооновлення біля кнопки
         const toolsUl = document.querySelector('.object-tools');
         if (toolsUl) {
             const li = document.createElement('li');
-            li.style.display = 'flex';
-            li.style.alignItems = 'center';
-            li.style.marginLeft = '10px';
+            li.style.cssText = 'display:flex;align-items:center;margin-left:10px;';
             li.innerHTML = `
-                <label style="color: #666; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
-                    <input type="checkbox" id="autoRefreshToggle" ${localStorage.getItem('adminAutoRefresh') === 'true' ? 'checked' : ''}>
-                    Автооновлення (5с)
-                </label>
-            `;
+            <label style="color:#666;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:5px;">
+                <input type="checkbox" id="autoRefreshToggle"
+                    ${localStorage.getItem('adminAutoRefresh') === 'true' ? 'checked' : ''}>
+                Авто-оновлення (5 с)
+            </label>
+        `;
             toolsUl.appendChild(li);
 
             let refreshInterval;
@@ -43,8 +53,58 @@
             }
 
             toggle.addEventListener('change', handleRefresh);
-            handleRefresh(); // Запускаємо перевірку при старті
+            handleRefresh();
         }
+
+        const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+        const wsUrl = `${protocol}://${location.host}/ws/admin/tasks/`;
+
+        let ws;
+
+        function connectWS() {
+            ws = new WebSocket(wsUrl);
+
+            ws.onmessage = function (e) {
+                try {
+                    const data = JSON.parse(e.data);
+                    showNotification(data);
+                    setTimeout(() => location.reload(), 1500);
+                } catch (_) { }
+            };
+
+            ws.onclose = function () {
+                setTimeout(connectWS, 3000);
+            };
+        }
+
+        connectWS();
+
+        function showNotification(data) {
+            const banner = document.createElement('div');
+            banner.style.cssText = [
+                'position:fixed;top:70px;right:20px;z-index:9999;',
+                'background:#2e7d32;color:white;padding:14px 20px;',
+                'border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.3);',
+                'font-size:14px;max-width:380px;word-break:break-word;',
+                'animation:slideIn 0.3s ease;',
+            ].join('');
+            banner.innerHTML = `
+            <strong>✅ Задачу завершено!</strong><br>
+            <b>${data.task_name || ''}</b><br>
+            ${data.result || ''}
+        `;
+            document.body.appendChild(banner);
+            setTimeout(() => banner.remove(), 5000);
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to   { transform: translateX(0);    opacity: 1; }
+        }
+    `;
+        document.head.appendChild(style);
     });
 </script>
 {% endblock %}

@@ -78,13 +78,13 @@ export default function DashboardPage() {
         <div>
             <Navbar activeLink="dashboard" />
             <div className="page-wrapper">
-                {}
+                { }
                 <div className="page-header">
                     <h1 className="page-title">🐾 Опитування на сумісність</h1>
                     <p className="page-subtitle">Обери опитування, запроси друзів і дізнайся наскільки ви схожі</p>
                 </div>
 
-                {}
+                { }
                 <div className="join-box mb-3">
                     <h3>Маєш код сесії? 🔑</h3>
                     <p>Введи код щоб приєднатись до чужої сесії</p>
@@ -105,12 +105,12 @@ export default function DashboardPage() {
                             {mySessions.filter(s => s.status !== 'completed').map(s => (
                                 <div key={s.id} className="card" style={{ padding: '1rem', borderLeft: '4px solid var(--lavender-deep)' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                                        <span className="badge badge-success">ACTIVE</span>
+                                        <span className="badge badge-success">АКТИВНА</span>
                                         <span style={{ fontWeight: 800, color: 'var(--lavender-deep)', letterSpacing: '0.1em' }}>{s.session_code}</span>
                                     </div>
                                     <div style={{ fontWeight: 700, marginBottom: '0.5rem' }}>{s.survey?.title}</div>
                                     <button className="btn btn-primary btn-sm btn-full" onClick={() => navigate(`/session/${s.id}`)}>
-                                        Continue →
+                                        Продовжити →
                                     </button>
                                 </div>
                             ))}
@@ -118,7 +118,7 @@ export default function DashboardPage() {
                     </div>
                 )}
 
-                {}
+                { }
                 <div className="filter-tabs">
                     <button className={`filter-tab${activeCategory === null ? ' active' : ''}`}
                         onClick={() => handleCategoryClick(null)}>Всі категорії</button>
@@ -131,7 +131,7 @@ export default function DashboardPage() {
                     ))}
                 </div>
 
-                {}
+                { }
                 <div className="grid-3">
                     {loadingSurveys ? (
                         <div className="loader" style={{ gridColumn: '1/-1' }}>

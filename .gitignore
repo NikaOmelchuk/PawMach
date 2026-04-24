@@ -1,4 +1,5 @@
 venv/
+.venv/
 __pycache__/
 *.py[cod]
 *.pyo
@@ -44,3 +45,6 @@ yarn-debug.log*
 
 dump.rdb
 *.rdb
+
+.expo/
+pyrightconfig.json

@@ -95,10 +95,15 @@ class QuizSubmission(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 class AsyncTaskResult(models.Model):
-    task_name = models.CharField(max_length=255)
-    task_data = models.TextField()
-    result = models.TextField()
-    completed_at = models.DateTimeField(auto_now_add=True)
+    task_name = models.CharField(max_length=255, verbose_name="Назва задачі")
+    task_data = models.TextField(verbose_name="Дані задачі")
+    result = models.TextField(verbose_name="Результат")
+    completed_at = models.DateTimeField(auto_now_add=True, verbose_name="Час завершення")
 
     class Meta:
         ordering = ['-completed_at']
+        verbose_name = 'Результат асинхронної задачі'
+        verbose_name_plural = 'Результати асинхронних задач'
+
+    def __str__(self):
+        return f"Результат задачі: {self.task_name}"

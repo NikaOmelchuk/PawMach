@@ -1,7 +1,9 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = 'django-insecure-yo_0a)y4wcsv-vr^*c8#jp63h$54!$11o0=#$u88uz3*%1g%3i'
 
@@ -73,14 +75,24 @@ TEMPLATES = [
 WSGI_APPLICATION = 'qa_board.wsgi.application'
 ASGI_APPLICATION = 'qa_board.asgi.application'
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379/1')],
+_REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/1')
+_USE_REDIS_CHANNELS = os.environ.get('USE_REDIS_CHANNELS', 'True') == 'True'
+
+if _USE_REDIS_CHANNELS:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [_REDIS_URL],
+            },
         },
-    },
-}
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
 
 DATABASES = {
     'default': {
@@ -177,9 +189,20 @@ CELERY_TASK_DEFAULT_QUEUE = 'default'
 CELERY_TASK_DEFAULT_EXCHANGE = 'default'
 CELERY_TASK_DEFAULT_ROUTING_KEY = 'default'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
-EMAIL_USE_TLS = False
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+_EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+_EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+
+if _EMAIL_HOST_USER and _EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    EMAIL_BACKEND = os.environ.get(
+        'EMAIL_BACKEND',
+        'django.core.mail.backends.console.EmailBackend'
+    )
+
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'sandbox.smtp.mailtrap.io')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 2525))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = _EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = _EMAIL_HOST_PASSWORD
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'PawMatch <noreply@pawmatch.app>')

@@ -26,6 +26,8 @@
 
 [Посилання на Лабораторну роботу 2](https://docs.google.com/document/d/1NZvT3jBGCAVFBO1DL7YQV7Yy3_gVZg_vpmgPuruMHTo/edit?usp=sharing)
 
+[Посилання на Розрахунково-графічну роботу](https://docs.google.com/document/d/1bnmp7PAJLCCfuney6M9jyz3-e-_BXafErX26hrY-QcA/edit?usp=sharing)
+
 **Посилання на звіти з дисципліни «Програмування інтерфейсів користувача»**
 
 [Посилання на Лабораторну роботу 1](https://docs.google.com/document/d/1GnSR_JhhzDvcZ6UlqQLdLGmVQOnkIRsTD0zI-oTVSrA/edit?usp=sharing)

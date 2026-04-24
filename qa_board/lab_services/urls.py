@@ -6,7 +6,7 @@ from .views import (
     TodoTaskViewSet, TimerViewSet,
     LabPollViewSet, LabPollOptionViewSet,
     ScoreEntryViewSet, QuizViewSet, QuizQuestionViewSet, QuizChoiceViewSet,
-    AsyncTaskResultViewSet
+    AsyncTaskResultViewSet, EmailBroadcastViewSet, ReportGenerationViewSet,
 )
 
 router = DefaultRouter()
@@ -25,6 +25,8 @@ router.register(r'quizzes', QuizViewSet, basename='quiz')
 router.register(r'quizzes/questions', QuizQuestionViewSet, basename='quiz-question')
 router.register(r'quizzes/choices', QuizChoiceViewSet, basename='quiz-choice')
 router.register(r'async-tasks', AsyncTaskResultViewSet, basename='async-task')
+router.register(r'email-broadcast', EmailBroadcastViewSet, basename='email-broadcast')
+router.register(r'report-generation', ReportGenerationViewSet, basename='report-generation')
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -68,7 +68,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
             announcement=announcement, user_id=user_id,
             defaults={'reaction_type': reaction_type},
         )
-        return Response({'status': 'reaction saved', 'reaction_type': obj.reaction_type})
+        return Response({'status': 'Реакцію збережено', 'reaction_type': obj.reaction_type})
 
 class QnaQuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QnaQuestionSerializer
@@ -147,7 +147,6 @@ class ScoreEntryViewSet(viewsets.ModelViewSet):
     queryset = ScoreEntry.objects.using('lab_db').all().order_by('-score')
 
     def get_permissions(self):
-
         if self.request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
             return [permissions.IsAdminUser()]
         return [permissions.IsAuthenticated()]
@@ -192,11 +191,11 @@ class QuizViewSet(viewsets.ModelViewSet):
     def trigger_report(self, request, pk=None):
         from .tasks import generate_compatibility_report_task
         generate_compatibility_report_task.delay(pk)
-        return Response({'status': 'Report generation queued'})
+        return Response({'status': 'Генерацію звіту поставлено у чергу'})
 
 class AsyncTaskResultViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AsyncTaskResultSerializer
-    queryset = AsyncTaskResult.objects.all()
+    queryset = AsyncTaskResult.objects.using('lab_db').all()
     permission_classes = [permissions.IsAdminUser]
 
 class QuizQuestionViewSet(viewsets.ModelViewSet):
@@ -208,3 +207,38 @@ class QuizChoiceViewSet(viewsets.ModelViewSet):
     serializer_class = QuizChoiceSerializer
     permission_classes = [permissions.IsAuthenticated]
     queryset = QuizChoice.objects.using('lab_db').all()
+
+
+class EmailBroadcastViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAdminUser]
+
+    @action(detail=False, methods=['post'], url_path='send')
+    def send(self, request):
+        from .tasks import send_survey_invitation_email
+        survey_title = request.data.get('survey_title', None)
+        send_survey_invitation_email.delay(survey_title)
+        return Response({
+            'status': 'Розсилку поставлено у чергу',
+            'message': 'Email-листи будуть надіслані усім зареєстрованим користувачам.',
+        })
+
+
+class ReportGenerationViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAdminUser]
+
+    @action(detail=False, methods=['post'], url_path='generate')
+    def generate(self, request):
+        from .tasks import generate_compatibility_report_task
+        from surveys.models import SurveySession
+        session = SurveySession.objects.order_by('-created_at').first()
+        if not session:
+            return Response(
+                {'error': 'Не знайдено жодної сесії опитування. Спочатку створіть та завершіть сесію.'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        generate_compatibility_report_task.delay(session.pk)
+        return Response({
+            'status': 'Генерацію звіту поставлено у чергу',
+            'session_id': session.pk,
+            'survey': session.survey.title,
+        })
