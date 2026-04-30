@@ -1,12 +1,14 @@
 import time
 import random
+import logging
 from celery import shared_task
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from lab_services.models import AsyncTaskResult
-from django.core.mail import send_mail
+from django.core.mail import get_connection, EmailMultiAlternatives
 from django.conf import settings
 
+logger = logging.getLogger(__name__)
 
 SITE_URL = "https://conceivably-orthostyle-mel.ngrok-free.dev"
 
@@ -94,36 +96,61 @@ def send_survey_invitation_email(survey_title: str | None = None):
     sent_count = 0
     failed_list = []
 
-    from django.core.mail import get_connection, EmailMultiAlternatives
-    import logging
-    logger = logging.getLogger(__name__)
+    logger.info(
+        f"[Email] Початок розсилки: backend={settings.EMAIL_BACKEND}, "
+        f"host={settings.EMAIL_HOST}:{settings.EMAIL_PORT}, "
+        f"user={settings.EMAIL_HOST_USER}, "
+        f"tls={settings.EMAIL_USE_TLS}, "
+        f"recipients={len(recipients)}"
+    )
 
-    connection = get_connection()
-    try:
-        connection.open()
-    except Exception as e:
-        logger.error(f"[Email] Не вдалося відкрити SMTP-з'єднання: {e}")
+    MAX_RETRIES = 3
 
-    for email in recipients:
-        try:
-            msg = EmailMultiAlternatives(
-                subject=subject,
-                body=message,
-                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@pawmatch.app'),
-                to=[email],
-                connection=connection,
-            )
-            msg.attach_alternative(html_message, "text/html")
-            msg.send()
-            sent_count += 1
-        except Exception as e:
-            logger.error(f"[Email] Помилка при відправці на {email}: {e}")
+    for i, email in enumerate(recipients):
+        success = False
+        for attempt in range(1, MAX_RETRIES + 1):
+            try:
+                conn = get_connection(
+                    backend=settings.EMAIL_BACKEND,
+                    host=settings.EMAIL_HOST,
+                    port=settings.EMAIL_PORT,
+                    username=settings.EMAIL_HOST_USER,
+                    password=settings.EMAIL_HOST_PASSWORD,
+                    use_tls=settings.EMAIL_USE_TLS,
+                    fail_silently=False,
+                )
+                msg = EmailMultiAlternatives(
+                    subject=subject,
+                    body=message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=[email],
+                    connection=conn,
+                )
+                msg.attach_alternative(html_message, "text/html")
+                msg.send(fail_silently=False)
+                sent_count += 1
+                success = True
+                logger.info(f"[Email] ✅ Надіслано на {email} (спроба {attempt})")
+                break
+            except Exception as e:
+                logger.warning(
+                    f"[Email] ⚠️ Спроба {attempt}/{MAX_RETRIES} для {email} — {e}"
+                )
+                try:
+                    conn.close()
+                except Exception:
+                    pass
+                if attempt < MAX_RETRIES:
+                    wait = 5 * attempt
+                    logger.info(f"[Email] ⏳ Чекаю {wait}с перед повтором...")
+                    time.sleep(wait)
+
+        if not success:
+            logger.error(f"[Email] ❌ Не вдалося надіслати на {email} після {MAX_RETRIES} спроб")
             failed_list.append(email)
 
-    try:
-        connection.close()
-    except Exception:
-        pass
+        if i < len(recipients) - 1:
+            time.sleep(5)
 
     if failed_list:
         result_text = (
